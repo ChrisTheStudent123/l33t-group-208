@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "l33t-group-208",
-    "slug": "l33t-group-208",
+    "name": "StockApp208",
+    "slug": "StockApp208",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "l33tgroup208",
+    "scheme": "stockapp208",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {

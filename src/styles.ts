@@ -1,0 +1,98 @@
+import { StyleSheet } from "react-native";
+
+export const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        padding: 16,
+        gap: 8,
+        backgroundColor: "#fff",
+        paddingBottom: 50
+    },
+    h1: { fontSize: 26, fontWeight: "800" },
+    h2: { fontSize: 20, fontWeight: "800" },
+    h3: { fontSize: 16, fontWeight: "700", marginTop: 10 },
+    p: { fontSize: 14, lineHeight: 20, opacity: 0.9 },
+    notice: { fontSize: 14, fontStyle: "italic", opacity: 0.75 },
+    input: {
+        borderWidth: 1,
+        borderColor: "#d1d5db",
+        borderRadius: 10,
+        padding: 10,
+        fontSize: 16,
+    },
+    card: {
+        borderWidth: 1,
+        borderColor: "#e5e7eb",
+        borderRadius: 12,
+        padding: 12,
+        gap: 6,
+    },
+    cardBase: {
+        backgroundColor: "#fff",
+        borderRadius: 10,
+        padding: 10,
+        marginTop: 5,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 5,
+        elevation: 3,
+    },
+    title: { fontSize: 16, fontWeight: "800" },
+    errorText: { color: "#b91c1c", fontWeight: "700" },
+
+
+    iconButtonWrapper: {
+        position: "absolute",
+        top: 8,
+        right: 8,
+        padding: 4,
+    },
+    iconButtonRemove: {
+        color: "red",
+        fontSize: 22,
+    },
+    iconButtonClear: {
+        color: "black",
+        fontSize: 22,
+     },
+
+    clockIntervalButton: {
+        position: "absolute",
+        bottom: 5,
+        left: 5,
+        backgroundColor: "rgba(0,0,0,0.3)",
+        padding: 10,
+        borderRadius: 25,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    modalBackground: {
+        flex: 1,
+        backgroundColor: "rgba(0,0,0,0.3)",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    modalContainer: {
+        width: 200,
+        backgroundColor: "#fff",
+        borderRadius: 10,
+        padding: 15,
+        alignItems: "center",
+    },
+    rowSpace: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        paddingLeft: 5,
+        paddingRight: 30,
+        padding: 5
+    },
+    intervalButton: {
+        padding: 8,
+        width: "100%",
+        alignItems: "center",
+        borderBottomWidth: 1,
+        borderColor: "#ddd",
+    },
+});
