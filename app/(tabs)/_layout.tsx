@@ -7,7 +7,8 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="watchlist"
         options={{
-          tabBarIcon: ({ color, size }) => <Ionicons name="bookmarks" size={size} />,
+          title: "My Stocks",
+          tabBarIcon: ({ color, size }) => <Ionicons name="bar-chart" size={size} />,
           headerShown: false,
         }}
       />
