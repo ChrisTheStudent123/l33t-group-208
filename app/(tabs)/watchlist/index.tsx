@@ -12,9 +12,10 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { styles } from "../src/styles";
-import { useStocksContext } from "../src/context/StocksContext";
-import { getStockQuote } from "../src/services/finnhub";
+import { styles } from "../../../src/styles";
+import { useStocksContext } from "../../../src/context/StocksContext";
+import { getStockQuote } from "../../../src/services/finnhub";
+import { Stock } from "../../../src/types/Stock"
 
 
 export default function Home() {
@@ -140,14 +141,19 @@ export default function Home() {
                     contentContainerStyle={styles.listContainer}
                     refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
                     renderItem={({ item }) => (
+                        
                         <Pressable
                             style={[styles.card, styles.cardBase]}
                             onLongPress={() => setShowRemoveFor(item.symbol)}
                         //
                         // *** Route to stocktick or stockdetail screen here
                         //
-                            onPress={() => router.push(`/stocktick/${item.symbol}`)}
+                            //onPress={() => router.push(`/stocktick/${item.symbol}`)}
+                            onPress={() => router.push(`/watchlist/stocktick?${item.symbol}`)}
+                                //onPress={ router.path}
+                            //onPress={() => router.push({ pathname="/watchlist/stocktick/[id]", params: {item.symbol}}})}
                         >
+                            
                         <View style={styles.rowSpace}>
                             <Text style={styles.title}>{item.symbol}</Text>
                             <Text style={[styles.priceText, { color: item.price > (item.lastPrice ?? item.price) ? "green" : item.price < (item.lastPrice ?? item.price) ? "red" : "black" }]}>
