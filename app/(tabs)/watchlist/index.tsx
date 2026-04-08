@@ -149,10 +149,8 @@ export default function Home() {
                         // *** Route to stocktick or stockdetail screen here
                         //
                             //onPress={() => router.push(`/stocktick/${item.symbol}`)}
-                            onPress={() => router.push(`/watchlist/stocktick?${item.symbol}`)}
-                                //onPress={ router.path}
-                            //onPress={() => router.push({ pathname="/watchlist/stocktick/[id]", params: {item.symbol}}})}
-                        >
+                            onPress={() => router.push(`./watchlist/stocktick/${item.symbol}`)}
+                         >
                             
                         <View style={styles.rowSpace}>
                             <Text style={styles.title}>{item.symbol}</Text>
