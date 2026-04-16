@@ -9,68 +9,87 @@ import {
   Keyboard,
   RefreshControl,
   Modal,
+  ActivityIndicator
 } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { styles } from "../../../src/styles";
 import { useStocksContext } from "../../../src/context/StocksContext";
-import { getStockQuote } from "../../../src/services/finnhub";
-import { Stock } from "../../../src/types/Stock"
+import { searchSymbols } from "../../../src/services/finnhub";
 
+// Shape of the Finnhub search response
+type SearchResult = {
+    description: string;
+    displaySymbol: string;
+    symbol: string;
+    type: string;
+};
 
 export default function Home() {
     const router = useRouter();
     const { stocks, addStock, removeStock, refreshStocks } = useStocksContext();
 
     const [searchQuery, setSearchQuery] = useState("");
-    const [searchResult, setSearchResult] = useState<Stock | null>(null);
-    const [loading, setLoading] = useState(false);
+    const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+    const [isSearching, setIsSearching] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    
     const [showRemoveFor, setShowRemoveFor] = useState<string | null>(null);
     const [refreshing, setRefreshing] = useState(false);
     const [refreshInterval, setRefreshInterval] = useState(15000); // 15s default
     const [intervalModalVisible, setIntervalModalVisible] = useState(false);
 
-      // Search
-    const handleSearch = async () => {
-        const symbol = searchQuery.trim().toUpperCase();
-        if (!symbol) return;
-
-        setLoading(true);
-        setError(null);
-        setShowRemoveFor(null);
-
-        try {
-            const result = await getStockQuote(symbol);
-            if (!result || result.price === 0) {
-                setError("Stock not found.");
-                setSearchResult(null);
-            } else {
-                 setSearchResult({ ...result, lastPrice: result.price });
+    // --- Debounced Search Logic ---
+    useEffect(() => {
+        const delayDebounceFn = setTimeout(async () => {
+            const query = searchQuery.trim();
+            if (query.length < 2) {
+                setSearchResults([]);
+                setIsSearching(false);
+                return;
             }
-        } catch {
-            setError("Failed to fetch stock quote");
-            setSearchResult(null);
-        }
 
-        setLoading(false);
-    };
+            setIsSearching(true);
+            setError(null);
+            try {
+                const results = await searchSymbols(query);
+                // This strips out both Crypto/Forex (:) AND International (.)
+                const filtered = results.filter((r: SearchResult) => !r.symbol.includes('.') && !r.symbol.includes(':')).slice(0, 5);
+                setSearchResults(filtered);
+            } catch (err) {
+                setError("Failed to search symbols.");
+            }
+            setIsSearching(false);
+        }, 500); // 500ms delay
 
-    const handleAdd = async () => {
-        if (!searchResult) return;
+        return () => clearTimeout(delayDebounceFn);
+    }, [searchQuery]);
 
+    // --- Add Stock Logic ---
+    const handleAdd = async (symbol: string) => {
         if (stocks.length >= 15) {
             setError("Watchlist capped at 15 entries.");
             return;
         }
 
-        await addStock(searchResult.symbol);
-        setSearchQuery("");
-        setSearchResult(null);
-        setError(null);
+        if (stocks.some(s => s.symbol === symbol)) {
+            setError(`${symbol} is already in your watchlist.`);
+            return;
+        }
+
+        setIsSearching(true);
+        try {
+            await addStock(symbol);
+            setSearchQuery("");
+            setSearchResults([]);
+            Keyboard.dismiss();
+        } catch (err) {
+            setError(`Finnhub does not support quotes for ${symbol}.`);
+        }
+        setIsSearching(false);
     };
 
-    // auto refresh using context
+    // Auto refresh using context
     useEffect(() => {
         const interval = setInterval(() => {
             if (stocks.length) refreshStocks();
@@ -88,6 +107,7 @@ export default function Home() {
 
     const handleBackgroundPress = () => {
         setShowRemoveFor(null);
+        setSearchResults([]);
         Keyboard.dismiss();
     };
 
@@ -99,76 +119,65 @@ export default function Home() {
     return (
         <TouchableWithoutFeedback onPress={handleBackgroundPress}>
             <View style={styles.container}>
-            {/* Search */}
+                {/* Search */}
                 <TextInput
                     style={styles.input}
-                    placeholder="Enter stock symbol..."
+                    placeholder="Search companies (e.g., Apple, Microsoft)..."
                     value={searchQuery}
                     onChangeText={setSearchQuery}
-                    onSubmitEditing={handleSearch}
-                    returnKeyType="search"
                     onFocus={() => setShowRemoveFor(null)}
                 />
 
-                {loading && <Text style={styles.notice}>Searching...</Text>}
+                {isSearching && <ActivityIndicator size="small" style={{ marginVertical: 10 }} />}
                 {error && <Text style={styles.errorText}>{error}</Text>}
 
-                {searchResult && (
-                    <Pressable
-                        style={[styles.card, styles.cardBase]}
-                        onPress={handleAdd}
-                        disabled={stocks.some(s => s.symbol === searchResult.symbol)}
-                    >
-                        <View style={styles.rowSpace}>
-                            <Text style={styles.title}>{searchResult.symbol}</Text>
-                            <Pressable onPress={() => setSearchResult(null)} style={styles.iconButtonWrapper}>
-                                <Ionicons name="close-outline" size={22} color={styles.iconButtonClear.color} />
+                {/* Autocomplete Dropdown */}
+                {searchResults.length > 0 && (
+                    <View style={{ backgroundColor: "#f9fafb", borderRadius: 8, borderWidth: 1, borderColor: "#e5e7eb", marginBottom: 10, marginTop: 5 }}>
+                        {searchResults.map((item, index) => (
+                            <Pressable
+                                key={`${item.symbol}-${index}`} 
+                                style={{ padding: 12, borderBottomWidth: 1, borderBottomColor: "#e5e7eb" }}
+                                onPress={() => handleAdd(item.symbol)}
+                            >
+                                <View style={styles.rowSpace}>
+                                    <Text style={{ fontWeight: "bold" }}>{item.symbol}</Text>
+                                    <Text style={{ fontSize: 12, color: "#6b7280", flexShrink: 1, marginLeft: 10 }}>{item.description}</Text>
+                                </View>
                             </Pressable>
-                        </View>
-
-                        <Text style={[styles.p, styles.centerText]}>
-                            {stocks.some(s => s.symbol === searchResult.symbol)
-                                ? "Already in watchlist"
-                                : `Current Price: $${searchResult.price.toFixed(2)}`}
-                        </Text>
-                    </Pressable>
+                        ))}
+                    </View>
                 )}
 
-            {/* WATCHLIST */}
+                {/* WATCHLIST */}
                 <FlatList
                     data={stocks}
                     keyExtractor={item => item.symbol}
                     contentContainerStyle={styles.listContainer}
                     refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
                     renderItem={({ item }) => (
-                        
                         <Pressable
                             style={[styles.card, styles.cardBase]}
                             onLongPress={() => setShowRemoveFor(item.symbol)}
-                        //
-                        // *** Route to stocktick or stockdetail screen here
-                        //
-                            //onPress={() => router.push(`/stocktick/${item.symbol}`)}
                             onPress={() => router.push(`./watchlist/stocktick/${item.symbol}`)}
-                         >
-                            
-                        <View style={styles.rowSpace}>
-                            <Text style={styles.title}>{item.symbol}</Text>
-                            <Text style={[styles.priceText, { color: item.price > (item.lastPrice ?? item.price) ? "green" : item.price < (item.lastPrice ?? item.price) ? "red" : "black" }]}>
-                                ${(item.price ?? 0).toFixed(2)}
-                            </Text>
-                        </View>
+                        >
+                            <View style={styles.rowSpace}>
+                                <Text style={styles.title}>{item.symbol}</Text>
+                                <Text style={[styles.priceText, { color: item.price > (item.lastPrice ?? item.price) ? "green" : item.price < (item.lastPrice ?? item.price) ? "red" : "black" }]}>
+                                    ${(item.price ?? 0).toFixed(2)}
+                                </Text>
+                            </View>
 
-                        {showRemoveFor === item.symbol && (
-                            <Pressable
-                                onPress={() => { removeStock(item.symbol); setShowRemoveFor(null); }}
-                                style={styles.iconButtonWrapper}
-                            >
-                                <Ionicons name="remove-circle-outline" size={styles.iconButtonRemove.fontSize} color={styles.iconButtonRemove.color} />
-                            </Pressable>
-                        )}
-                    </Pressable>
-                  )}
+                            {showRemoveFor === item.symbol && (
+                                <Pressable
+                                    onPress={() => { removeStock(item.symbol); setShowRemoveFor(null); }}
+                                    style={styles.iconButtonWrapper}
+                                >
+                                    <Ionicons name="remove-circle-outline" size={styles.iconButtonRemove.fontSize} color={styles.iconButtonRemove.color} />
+                                </Pressable>
+                            )}
+                        </Pressable>
+                    )}
                 />
 
                 {/* Clock/Interval Pop up */}

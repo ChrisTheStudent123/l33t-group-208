@@ -58,3 +58,37 @@ export async function getCompanyNews(symbol: string, fromDate: string, toDate: s
         throw err;
     }
 }
+
+export async function getEarningsCalendar(fromDate: string, toDate: string) {
+    if (!API_KEY) throw new Error("Finnhub API key is missing!");
+
+    try {
+        const res = await fetch(
+            `https://finnhub.io/api/v1/calendar/earnings?from=${fromDate}&to=${toDate}&token=${API_KEY}`
+        );
+        if (!res.ok) throw new Error("Failed to fetch earnings calendar");
+        
+        const data = await res.json();
+        return data.earningsCalendar || []; 
+    } catch (err) {
+        console.error(err);
+        throw err;
+    }
+}
+
+export async function searchSymbols(query: string) {
+    if (!API_KEY) throw new Error("Finnhub API key is missing!");
+    try {
+        const res = await fetch(
+            `https://finnhub.io/api/v1/search?q=${query}&token=${API_KEY}`
+        );
+        if (!res.ok) throw new Error("Symbol search failed");
+        
+        const data = await res.json();
+        // Finnhub returns an object with a 'result' array
+        return data.result || []; 
+    } catch (err) {
+        console.error(err);
+        return [];
+    }
+}
