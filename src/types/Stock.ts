@@ -8,3 +8,13 @@ export type Stock = {
     prevClose: number;   // previous close
     timestamp: number;   // last update timestamp
 };
+
+export type NewsArticle = {
+    id: number;
+    headline: string;
+    summary: string;
+    url: string;
+    image: string;
+    source: string;
+    datetime: number;
+};

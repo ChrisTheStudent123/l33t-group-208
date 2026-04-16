@@ -95,4 +95,50 @@ export const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderColor: "#ddd",
     },
+    newsCard: {
+        backgroundColor: "#fff",
+        borderRadius: 12,
+        marginBottom: 16,
+        overflow: "hidden",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 5,
+        elevation: 3,
+    },
+    newsImage: {
+        width: "100%",
+        height: 180,
+        backgroundColor: "#e5e7eb",
+    },
+    newsContent: {
+        padding: 14,
+        gap: 6,
+    },
+    newsMetaRow: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: 4,
+    },
+    newsSource: {
+        fontSize: 12,
+        fontWeight: "800",
+        color: "#2563eb", // Blue accent for source
+        textTransform: "uppercase",
+    },
+    newsDate: {
+        fontSize: 12,
+        color: "#6b7280",
+    },
+    newsHeadline: {
+        fontSize: 18,
+        fontWeight: "bold",
+        lineHeight: 24,
+    },
+    newsSummary: {
+        fontSize: 14,
+        color: "#4b5563",
+        lineHeight: 20,
+    },
 });

@@ -28,3 +28,33 @@ export async function getStockQuote(symbol: string) {
         throw err;
     }
 }
+
+export async function getMarketNews() {
+    if (!API_KEY) throw new Error("Finnhub API key is missing!");
+
+    try {
+        const res = await fetch(
+            `https://finnhub.io/api/v1/news?category=general&token=${API_KEY}`
+        );
+        if (!res.ok) throw new Error("Failed to fetch market news");
+        return await res.json(); 
+    } catch (err) {
+        console.error(err);
+        throw err;
+    }
+}
+
+export async function getCompanyNews(symbol: string, fromDate: string, toDate: string) {
+    if (!API_KEY) throw new Error("Finnhub API key is missing!");
+
+    try {
+        const res = await fetch(
+            `https://finnhub.io/api/v1/company-news?symbol=${symbol}&from=${fromDate}&to=${toDate}&token=${API_KEY}`
+        );
+        if (!res.ok) throw new Error(`Failed to fetch news for ${symbol}`);
+        return await res.json();
+    } catch (err) {
+        console.error(err);
+        throw err;
+    }
+}
