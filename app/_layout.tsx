@@ -1,6 +1,12 @@
 import { Stack } from "expo-router";
+import { StocksProvider } from "../src/context/StocksContext";
 
 export default function RootLayout() {
-  // Root uses a Stack, but the actual primary navigation is Tabs inside (tabs).
-  return <Stack screenOptions={{ headerShown: false }} />;
+  // Hoisted state: Now the entire app (Watchlist, Calendar, News) 
+  // shares the exact same stock data in memory.
+  return (
+    <StocksProvider>
+      <Stack screenOptions={{ headerShown: false }} />
+    </StocksProvider>
+  );
 }
