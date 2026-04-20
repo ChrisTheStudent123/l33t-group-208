@@ -48,6 +48,7 @@ export const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 3,
+    flexDirection: "row",
   },
   cardBaseGreen: {
     backgroundColor: "#73df6d",
@@ -59,9 +60,10 @@ export const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 3,
+    flexDirection: "row",
   },
   cardBaseGrey: {
-    backgroundColor: "#90aec7",
+    backgroundColor: "#baccd9",
     borderRadius: 10,
     padding: 10,
     marginTop: 5,
@@ -70,6 +72,7 @@ export const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 3,
+    flexDirection: "row",
   },
   title: { fontSize: 16, fontWeight: "800" },
   errorText: { color: "#b91c1c", fontWeight: "700" },
@@ -182,5 +185,16 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     color: "#4b5563",
     lineHeight: 20,
+  },
+  button: {
+    backgroundColor: "#007AFF",
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  text: {
+    color: "#fff",
+    fontSize: 16,
   },
 });
