@@ -11,7 +11,7 @@ export default function RootLayout() {
           headerTitleAlign: "center",
         }}
       />
-      <Stack.Screen name="stocktick/[id]" options={{ title: "Stock Ticker" }} />
+      <Stack.Screen name="stocktick/[id]" options={{ headerTitle: "Stock Ticker", headerTitleAlign: "center" }} />
     </Stack>
   );
 }
