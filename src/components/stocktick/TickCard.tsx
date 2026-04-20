@@ -21,7 +21,7 @@ function percentDifference(from: number, to: number): string {
   return `${s}%`;
 }
 
-const difference = (item: any) => {return percentDifference(item.current, item.change)}
+const difference = (item: any) => {return percentDifference(item.change, item.current)}
 
 export function TickCard({item, label, cardColor}: any){
     return (

@@ -37,9 +37,9 @@ type Tick = {
   change: number;
 };
 
-let firstRefresh = true;
-
 export default function Ticker() {
+  const [firstRefresh, setFirstRefresh] = useState(true);
+
   const id = useLocalSearchParams<{ id?: string }>();
 
   const { stocks, refreshStocks } = useStocksContext();
@@ -84,13 +84,13 @@ export default function Ticker() {
 
   // Add a new item newestfirst
   const addNew = () => {
-      if (stock?.price !== stock?.lastPrice || firstRefresh){
-    const date = Date.now();
-    setTicksHistory((prev) => [
-      { date: date, current: stock?.price as number, change: stock?.lastPrice as number },
-      ...prev,
-    ]);
-  }
+    if (stock?.price !== stock?.lastPrice || firstRefresh) {
+      const date = Date.now();
+      setTicksHistory((prev) => [
+        { date: date, current: stock?.price as number, change: stock?.lastPrice as number },
+        ...prev,
+      ]);
+    }
   };
 
   const tickColor = (item: Tick) => {
@@ -131,11 +131,10 @@ export default function Ticker() {
   //auto refresh
   useEffect(() => {
     const interval = setInterval(() => {
-      
       addTick();
-      if (firstRefresh){
+      if (firstRefresh) {
         changeInterval(15);
-        firstRefresh = false;
+        setFirstRefresh(false);
       }
     }, refreshInterval);
     return () => clearInterval(interval);
@@ -158,18 +157,14 @@ export default function Ticker() {
 
   return (
     <View style={styles.container}>
-      <Pressable style={styles.cardBase} onPress={addTick}>
+      <View style={styles.cardBase}>
         <Text style={styles.h1}>Currently Monitoring: {stock?.symbol}</Text>
-      </Pressable>
+      </View>
 
       {/* Market Status Banner */}
       <MarketStatusBanner marketStatus={marketStatus} />
       <SafeAreaView style={styles.container}>
-        <FlatList
-          data={memoData}
-          keyExtractor={(e) => String(e.date)}
-          renderItem={renderItem}
-        />
+        <FlatList data={memoData} keyExtractor={(e) => String(e.date)} renderItem={renderItem} />
       </SafeAreaView>
 
       <HomeButton />
