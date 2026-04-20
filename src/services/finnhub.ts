@@ -99,3 +99,25 @@ export async function searchSymbols(query: string) {
         return [];
     }
 }
+
+export async function getMarketStatus() {
+    if (!API_KEY) {
+        throw new Error("Finnhub API key is missing!");
+    }
+
+    const res = await fetch(
+        `${BASE_URL}/stock/market-status?exchange=US&token=${API_KEY}`
+    );
+
+    if (!res.ok) {
+        throw new Error("Failed to fetch market status");
+    }
+
+    const data = await res.json();
+
+    return {
+        isOpen: data.isOpen,
+        session: data.session, // pre-market | regular | post-market | null
+        timestamp: data.t,
+    };
+}
