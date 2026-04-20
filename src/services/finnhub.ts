@@ -6,6 +6,12 @@ export async function getStockQuote(symbol: string) {
         throw new Error("Finnhub API key is missing! Check your .env");
     }
 
+    function rand(min: number, max: number) {
+      return Math.random() * (max - min) + min;
+    }
+
+
+
     try {
         const res = await fetch(
             `https://finnhub.io/api/v1/quote?symbol=${symbol}&token=${API_KEY}`
@@ -14,6 +20,7 @@ export async function getStockQuote(symbol: string) {
         if (!res.ok) throw new Error("Failed to fetch stock quote");
 
         const data = await res.json();
+          data.c = rand(5,10);
         return {
            symbol,
            price: data.c,
