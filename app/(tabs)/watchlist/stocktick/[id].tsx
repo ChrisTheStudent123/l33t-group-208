@@ -160,10 +160,6 @@ export default function Ticker() {
           data={memoData}
           keyExtractor={(e) => String(e.date)}
           renderItem={renderItem}
-          contentContainerStyle={styles.container}
-          initialNumToRender={10}
-          maxToRenderPerBatch={10}
-          windowSize={21}
         />
       </SafeAreaView>
 
