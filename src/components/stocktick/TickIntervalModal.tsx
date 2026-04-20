@@ -13,7 +13,7 @@ export function TickIntervalModal({intervalModalVisible, setIntervalModalVisible
         <View style={styles.modalBackground}>
           <View style={styles.modalContainer}>
             <Text style={styles.h3}>Select Refresh Interval</Text>
-            {[3, 5, 10, 15].map((sec) => (
+            {[15, 30, 45, 60].map((sec) => (
               <Pressable
                 key={sec}
                 onPress={() => changeInterval(sec)}
