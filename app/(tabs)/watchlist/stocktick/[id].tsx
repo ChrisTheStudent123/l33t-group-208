@@ -37,12 +37,14 @@ type Tick = {
   change: number;
 };
 
+let firstRefresh = true;
+
 export default function Ticker() {
   const id = useLocalSearchParams<{ id?: string }>();
 
   const { stocks, refreshStocks } = useStocksContext();
 
-  const [refreshInterval, setRefreshInterval] = useState(5000); // 15s default
+  const [refreshInterval, setRefreshInterval] = useState(500); // 15s default
   const [maxTicks, setMaxTicks] = useState<number>(5);
 
   const [intervalModalVisible, setIntervalModalVisible] = useState(false);
@@ -82,11 +84,13 @@ export default function Ticker() {
 
   // Add a new item newestfirst
   const addNew = () => {
+      if (stock?.price !== stock?.lastPrice || firstRefresh){
     const date = Date.now();
     setTicksHistory((prev) => [
       { date: date, current: stock?.price as number, change: stock?.lastPrice as number },
       ...prev,
     ]);
+  }
   };
 
   const tickColor = (item: Tick) => {
@@ -127,7 +131,12 @@ export default function Ticker() {
   //auto refresh
   useEffect(() => {
     const interval = setInterval(() => {
+      
       addTick();
+      if (firstRefresh){
+        changeInterval(15);
+        firstRefresh = false;
+      }
     }, refreshInterval);
     return () => clearInterval(interval);
   }, [stocks, refreshInterval]);
